@@ -4,9 +4,16 @@ using Sample.Infrastructure.Orders.Model;
 
 namespace Sample.Infrastructure.Orders.DbContexts;
 
-public sealed class ProductsDbContext : Microsoft.EntityFrameworkCore.DbContext
+public sealed class OrdersDbContext : Microsoft.EntityFrameworkCore.DbContext
 {
-    public ProductsDbContext(DbContextOptions<ProductsDbContext> options) : base(options)
+    
+    private static Func<OrdersDbContext, Guid, Task<Order?>> GetById =
+        EF.CompileAsyncQuery(
+            (OrdersDbContext context, Guid id) =>
+                context.Set<Order>().FirstOrDefault(c => c.Id == id));
+    
+    
+    public OrdersDbContext(DbContextOptions<OrdersDbContext> options) : base(options)
     {
     }
     
@@ -46,5 +53,11 @@ public sealed class ProductsDbContext : Microsoft.EntityFrameworkCore.DbContext
     {
         await OutBox.ExecuteDeleteAsync(cancellationToken: cancellationToken);
         await Orders.ExecuteDeleteAsync(cancellationToken: cancellationToken);
+    }
+    
+    
+    public async Task<Order?> FindById(Guid id)
+    {
+        return await GetById(this, id);
     }
 }
