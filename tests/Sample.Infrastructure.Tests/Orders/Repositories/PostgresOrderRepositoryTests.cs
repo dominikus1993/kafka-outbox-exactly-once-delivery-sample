@@ -13,6 +13,7 @@ public sealed class SqlOrderRepositoryTests : IClassFixture<PostgresOrdersFixtur
 {
     private readonly PostgresOrdersFixture _postgresFixture;
     private readonly IOrdersCreationRepository _ordersCreationRepository;
+    private readonly IOrdersReader _ordersReader;
     private readonly OrdersDbContext _productsDbContext;
     private readonly DateTimeOffset _now = DateTimeOffset.UtcNow;
     public SqlOrderRepositoryTests(PostgresOrdersFixture postgresFixture)
@@ -20,6 +21,7 @@ public sealed class SqlOrderRepositoryTests : IClassFixture<PostgresOrdersFixtur
         _postgresFixture = postgresFixture;
         _productsDbContext = _postgresFixture.DbContextFactory.CreateDbContext();
         _ordersCreationRepository = new PostgresOrdersCreationRepository(_postgresFixture.DbContextFactory, new FakeTimeProvider(_now));
+        _ordersReader = new PostgresOrdersReader(_postgresFixture.DbContextFactory);
     }
 
     [Theory]
@@ -30,21 +32,23 @@ public sealed class SqlOrderRepositoryTests : IClassFixture<PostgresOrdersFixtur
         var res = await _ordersCreationRepository.CreateOrder(order);
         
         Assert.True(res.IsSuccess);
+
+        var orderFromDbResult = await _ordersReader.FindById(res.Value);
         
-        var orderFromDb = await _ordersCreationRepository.GetOrderById(order.Id);
-        
+        Assert.True(orderFromDbResult.IsSuccess);
+        var orderFromDb = orderFromDbResult.Value;
         Assert.NotNull(orderFromDb);
         Assert.Equal(OrderState.New, orderFromDb.State);
     }
     
     public Task InitializeAsync()
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 
     public async Task DisposeAsync()
     {
         await _productsDbContext.CleanAllTables();
-        _productsDbContext.Dispose();
+        await _productsDbContext.DisposeAsync();
     }
 }

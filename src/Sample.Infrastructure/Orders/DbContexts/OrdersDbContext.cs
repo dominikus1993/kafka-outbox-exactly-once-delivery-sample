@@ -7,10 +7,10 @@ namespace Sample.Infrastructure.Orders.DbContexts;
 public sealed class OrdersDbContext : Microsoft.EntityFrameworkCore.DbContext
 {
     
-    private static Func<OrdersDbContext, Guid, Task<Order?>> GetById =
+    private static readonly Func<OrdersDbContext, Guid, CancellationToken, Task<Order?>> GetById =
         EF.CompileAsyncQuery(
-            (OrdersDbContext context, Guid id) =>
-                context.Set<Order>().FirstOrDefault(c => c.Id == id));
+            (OrdersDbContext context, Guid id, CancellationToken _) =>
+                context.Orders.FirstOrDefault(c => c.Id == id));
     
     
     public OrdersDbContext(DbContextOptions<OrdersDbContext> options) : base(options)
@@ -56,8 +56,8 @@ public sealed class OrdersDbContext : Microsoft.EntityFrameworkCore.DbContext
     }
     
     
-    public async Task<Order?> FindById(Guid id)
+    public async Task<Order?> FindOrderById(Guid id, CancellationToken cancellationToken = default)
     {
-        return await GetById(this, id);
+        return await GetById(this, id, cancellationToken);
     }
 }
