@@ -22,7 +22,7 @@ public sealed class OrdersDbContext : Microsoft.EntityFrameworkCore.DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        
+        modelBuilder.HasDefaultSchema("orders");
         modelBuilder.Entity<Order>(order =>
         {
             order.HasKey(x => new { x.Id, x.OrderNumber });
