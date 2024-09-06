@@ -38,7 +38,7 @@ public sealed class PostgresOrdersFixture : IAsyncLifetime
                 {
                     optionsBuilder.MigrationsAssembly(typeof(OrdersDbContext).Assembly.FullName);
                     optionsBuilder.CommandTimeout(500);
-                }).UseSnakeCaseNamingConvention();
+                });
         DbContextFactory = new ProductsDbContextFactory(builder);
         await MigrateAsync();
     }

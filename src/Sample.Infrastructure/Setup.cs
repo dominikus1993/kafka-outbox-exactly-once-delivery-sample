@@ -13,7 +13,7 @@ public static class Setup
         {
             optionsBuilder.UseNpgsql(configuration.GetConnectionString("Products"), contextOptionsBuilder =>
             {
-            }).UseSnakeCaseNamingConvention();
+            });
         });
 
         return services;

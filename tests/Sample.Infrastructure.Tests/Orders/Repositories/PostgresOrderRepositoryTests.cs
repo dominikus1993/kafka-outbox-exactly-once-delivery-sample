@@ -41,6 +41,16 @@ public sealed class SqlOrderRepositoryTests : IClassFixture<PostgresOrdersFixtur
         Assert.Equal(OrderState.New, orderFromDb.State);
     }
     
+    [Theory]
+    [AutoData]
+    public async Task TestFindByIdWhenNoExists(Guid orderId)
+    {
+        var orderFromDbResult = await _ordersReader.FindById(orderId);
+        Assert.False(orderFromDbResult.IsSuccess);
+        var ex = orderFromDbResult.ErrorValue;
+        Assert.IsType<OrderNotFoundException>(ex);
+    }
+    
     public Task InitializeAsync()
     {
         return Task.CompletedTask;
