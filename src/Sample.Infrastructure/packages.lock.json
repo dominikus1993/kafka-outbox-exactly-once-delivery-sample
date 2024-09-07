@@ -2,6 +2,15 @@
   "version": 2,
   "dependencies": {
     "net8.0": {
+      "Confluent.Kafka": {
+        "type": "Direct",
+        "requested": "[2.5.3, )",
+        "resolved": "2.5.3",
+        "contentHash": "IdKQCWsRC+5ld9c7djAvKCFOn++qVW2BrcpxngwkM6ELeXIKjJ6wfa7R096XZFqqU3LIl7zGPypTKQliAZZArQ==",
+        "dependencies": {
+          "librdkafka.redist": "2.5.3"
+        }
+      },
       "EntityFrameworkCore.NamingConventions": {
         "type": "Direct",
         "requested": "[8.0.0, )",
@@ -52,6 +61,11 @@
         "type": "Transitive",
         "resolved": "2.14.1",
         "contentHash": "lQKvtaTDOXnoVJ20ibTuSIOf2i0uO0MPbDhd1jm238I+U/2ZnRENj0cktKZhtchBMtCUSRQ5v4xBCUbKNmyVMw=="
+      },
+      "librdkafka.redist": {
+        "type": "Transitive",
+        "resolved": "2.5.3",
+        "contentHash": "gB4MHLwnnIAiXygQfIN4joA5mHuOSDCtsPJlSvhbDGubBxSlYbgBHGe1Q8CSpeUbw5okbB7UmqagzZ4i8EcW2w=="
       },
       "Microsoft.Bcl.AsyncInterfaces": {
         "type": "Transitive",

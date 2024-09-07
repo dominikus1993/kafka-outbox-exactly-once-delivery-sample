@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Sample.Common.Messaging.Abstractions;
 using Sample.Common.Types;
 using Sample.Core.Events;
@@ -47,3 +48,8 @@ internal sealed class OrderSavedMessage : IMessage
     public Guid MessageId { get; init; }
     public long SendAt { get; init; }
 }
+
+[JsonSerializable(typeof(OrderSavedMessage))]
+[JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.Unspecified,
+    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull)]
+internal sealed partial class MessagesSerializationConfig : JsonSerializerContext;

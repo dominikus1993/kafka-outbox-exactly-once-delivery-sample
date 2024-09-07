@@ -15,10 +15,23 @@
           "Mono.TextTemplating": "2.2.1"
         }
       },
+      "Confluent.Kafka": {
+        "type": "Transitive",
+        "resolved": "2.5.3",
+        "contentHash": "IdKQCWsRC+5ld9c7djAvKCFOn++qVW2BrcpxngwkM6ELeXIKjJ6wfa7R096XZFqqU3LIl7zGPypTKQliAZZArQ==",
+        "dependencies": {
+          "librdkafka.redist": "2.5.3"
+        }
+      },
       "Humanizer.Core": {
         "type": "Transitive",
         "resolved": "2.14.1",
         "contentHash": "lQKvtaTDOXnoVJ20ibTuSIOf2i0uO0MPbDhd1jm238I+U/2ZnRENj0cktKZhtchBMtCUSRQ5v4xBCUbKNmyVMw=="
+      },
+      "librdkafka.redist": {
+        "type": "Transitive",
+        "resolved": "2.5.3",
+        "contentHash": "gB4MHLwnnIAiXygQfIN4joA5mHuOSDCtsPJlSvhbDGubBxSlYbgBHGe1Q8CSpeUbw5okbB7UmqagzZ4i8EcW2w=="
       },
       "Microsoft.Bcl.AsyncInterfaces": {
         "type": "Transitive",
@@ -310,6 +323,7 @@
       "sample.infrastructure": {
         "type": "Project",
         "dependencies": {
+          "Confluent.Kafka": "[2.5.3, )",
           "EntityFrameworkCore.NamingConventions": "[8.0.0, )",
           "Microsoft.EntityFrameworkCore.Relational": "[8.0.8, )",
           "Npgsql.EntityFrameworkCore.PostgreSQL": "[8.0.4, )",
