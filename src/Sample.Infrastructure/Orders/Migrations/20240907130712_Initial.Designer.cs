@@ -12,7 +12,7 @@ using Sample.Infrastructure.Orders.DbContexts;
 namespace Sample.Infrastructure.Orders.Migrations
 {
     [DbContext(typeof(OrdersDbContext))]
-    [Migration("20240906154720_Initial")]
+    [Migration("20240907130712_Initial")]
     partial class Initial
     {
         /// <inheritdoc />

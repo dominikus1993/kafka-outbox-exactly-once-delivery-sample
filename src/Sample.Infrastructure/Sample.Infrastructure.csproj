@@ -11,4 +11,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Sample.Core\Sample.Core.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Orders\Migrations\" />
+  </ItemGroup>
 </Project>

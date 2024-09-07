@@ -38,6 +38,7 @@ public sealed class OrdersDbContext : Microsoft.EntityFrameworkCore.DbContext
         modelBuilder.Entity<OutBox>(outBox =>
         {
             outBox.HasKey(x => x.Id);
+            outBox.HasIndex(x => new { x.CreatedAtTimestamp });
             outBox.Property(x => x.Id).ValueGeneratedNever();
             outBox.HasIndex(x => x.ProcessedAtTimestamp);
             outBox.HasIndex(x => x.CreatedAtTimestamp);
@@ -61,7 +62,7 @@ public sealed class OrdersDbContext : Microsoft.EntityFrameworkCore.DbContext
         return await ReadOnlyById(this, id, cancellationToken);
     }
     
-    public IAsyncEnumerable<OutBox> GetUnprocessedOutBoxEvents(CancellationToken cancellationToken = default)
+    public IAsyncEnumerable<OutBox> GetUnprocessedOutBoxEvents()
     {
         return this.OutBox.AsNoTracking().Where(x => x.ProcessedAtTimestamp == null).OrderBy(x => x.CreatedAtTimestamp)
             .AsAsyncEnumerable();

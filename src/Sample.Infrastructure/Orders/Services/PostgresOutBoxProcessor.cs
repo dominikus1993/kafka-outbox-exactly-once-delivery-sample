@@ -22,7 +22,7 @@ public sealed class PostgresOutBoxProcessor
     {
         await using var readContext = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
         await using var writeContext = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
-        var events = readContext.GetUnprocessedOutBoxEvents(cancellationToken);
+        var events = readContext.GetUnprocessedOutBoxEvents();
         await foreach (var @event in events.WithCancellation(cancellationToken))
         {
             var messagePublicationResult = await _messagePublisher.Publish(@event, cancellationToken);
