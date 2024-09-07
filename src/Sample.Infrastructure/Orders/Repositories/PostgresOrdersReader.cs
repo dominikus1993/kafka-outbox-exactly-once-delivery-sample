@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using Sample.Core.Common.Types;
+using Sample.Common.Types;
 using Sample.Core.Order.Model;
 using Sample.Core.Order.Repositories;
 using Sample.Infrastructure.Orders.DbContexts;
@@ -28,7 +28,7 @@ public sealed class PostgresOrdersReader : IOrdersReader
     public async Task<Result<Order?>> FindById(Guid id, CancellationToken cancellationToken = default)
     {
         await using var context = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
-        var res = await context.FindOrderById(id, cancellationToken);
+        var res = await context.ReadOnlyOrderById(id, cancellationToken);
         if (res is not null)
         {
             return Result.Ok<Order?>(res);

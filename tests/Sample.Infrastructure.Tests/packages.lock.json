@@ -1199,8 +1199,14 @@
           "xunit.extensibility.core": "[2.9.0]"
         }
       },
-      "sample.core": {
+      "sample.common": {
         "type": "Project"
+      },
+      "sample.core": {
+        "type": "Project",
+        "dependencies": {
+          "Sample.Common": "[1.0.0, )"
+        }
       },
       "sample.infrastructure": {
         "type": "Project",

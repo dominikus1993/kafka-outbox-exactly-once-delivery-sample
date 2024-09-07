@@ -1,4 +1,4 @@
-namespace Sample.Core.Common.Types;
+namespace Sample.Common.Types;
 
 public static class Result
 {
@@ -17,7 +17,7 @@ public static class Result
 
 public abstract class Result<T>
 {
-    internal Result()
+    protected internal Result()
     {
         
     }
@@ -35,7 +35,7 @@ public sealed class Success<T>: Result<T>
 {
     internal readonly T Ok;
         
-    public Success(T ok)
+    internal Success(T ok)
     {
         ArgumentNullException.ThrowIfNull(ok);
         Ok = ok;
@@ -75,7 +75,7 @@ internal sealed class Failure<T>: Result<T>
 {
     internal readonly Exception Error;
         
-    public Failure(Exception error)
+    internal Failure(Exception error)
     {
         ArgumentNullException.ThrowIfNull(error);
         Error = error;

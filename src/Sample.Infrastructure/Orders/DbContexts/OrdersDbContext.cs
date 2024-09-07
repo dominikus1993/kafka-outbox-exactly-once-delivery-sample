@@ -7,10 +7,10 @@ namespace Sample.Infrastructure.Orders.DbContexts;
 public sealed class OrdersDbContext : Microsoft.EntityFrameworkCore.DbContext
 {
     
-    private static readonly Func<OrdersDbContext, Guid, CancellationToken, Task<Order?>> GetById =
+    private static readonly Func<OrdersDbContext, Guid, CancellationToken, Task<Order?>> ReadOnlyById =
         EF.CompileAsyncQuery(
             (OrdersDbContext context, Guid id, CancellationToken _) =>
-                context.Orders.FirstOrDefault(c => c.Id == id));
+                context.Orders.AsNoTracking().FirstOrDefault(c => c.Id == id));
     
     
     public OrdersDbContext(DbContextOptions<OrdersDbContext> options) : base(options)
@@ -56,8 +56,14 @@ public sealed class OrdersDbContext : Microsoft.EntityFrameworkCore.DbContext
     }
     
     
-    public async Task<Order?> FindOrderById(Guid id, CancellationToken cancellationToken = default)
+    public async Task<Order?> ReadOnlyOrderById(Guid id, CancellationToken cancellationToken = default)
     {
-        return await GetById(this, id, cancellationToken);
+        return await ReadOnlyById(this, id, cancellationToken);
+    }
+    
+    public IAsyncEnumerable<OutBox> GetUnprocessedOutBoxEvents(CancellationToken cancellationToken = default)
+    {
+        return this.OutBox.AsNoTracking().Where(x => x.ProcessedAtTimestamp == null).OrderBy(x => x.CreatedAtTimestamp)
+            .AsAsyncEnumerable();
     }
 }

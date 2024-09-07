@@ -1,6 +1,6 @@
-using Sample.Core.Common.Types;
+using Sample.Common.Types;
 
-namespace Sample.Core.Common.Messaging.Abstractions;
+namespace Sample.Common.Messaging.Abstractions;
 
 public interface IMessagePublisher
 {

@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
 using Sample.Core.Order.Model;
 
-namespace Sample.Core.Common.Events;
+namespace Sample.Core.Events;
 
 
 [JsonPolymorphic]

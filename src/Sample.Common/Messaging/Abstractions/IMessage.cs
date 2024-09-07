@@ -1,4 +1,4 @@
-namespace Sample.Core.Common.Messaging.Abstractions;
+namespace Sample.Common.Messaging.Abstractions;
 
 public interface IMessage
 {

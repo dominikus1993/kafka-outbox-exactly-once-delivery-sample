@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using Sample.Core.Common.Events;
-using Sample.Core.Common.Types;
+using Sample.Common.Types;
+using Sample.Core.Events;
 using Sample.Core.Order.Model;
 using Sample.Core.Order.Repositories;
 using Sample.Infrastructure.Orders.DbContexts;

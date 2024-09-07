@@ -1,5 +1,5 @@
 using System.Text.Json;
-using Sample.Core.Common.Events;
+using Sample.Core.Events;
 using Sample.Infrastructure.Orders.Serialization;
 
 namespace Sample.Infrastructure.Orders.Model;

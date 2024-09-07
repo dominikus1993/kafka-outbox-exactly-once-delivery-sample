@@ -1,4 +1,4 @@
-using Sample.Core.Common.Types;
+using Sample.Common.Types;
 
 namespace Sample.Core.Order.Repositories;
 
