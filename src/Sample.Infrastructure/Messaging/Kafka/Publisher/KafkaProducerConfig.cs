@@ -8,11 +8,7 @@ public sealed class KafkaMessagePublisherConfig<T> where T : IMessage
     
     public KafkaMessagePublisherConfig(string topic, Func<T, string>? keySelector = null)
     {
-        if (string.IsNullOrEmpty(topic))
-        {
-            throw new ArgumentException("Topic should be neither null or empty", nameof(topic));
-        }
-
+        ArgumentException.ThrowIfNullOrEmpty(topic);
         KeySelector = keySelector ?? DefaultKeySelector;
         Topic = topic;
     }
