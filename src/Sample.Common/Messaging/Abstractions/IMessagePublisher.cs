@@ -4,5 +4,6 @@ namespace Sample.Common.Messaging.Abstractions;
 
 public interface IMessagePublisher
 {
-    ValueTask<Result<Unit>> Publish<TMessage>(TMessage message, CancellationToken cancellationToken) where TMessage : IMessage;
+    ValueTask<Result<Unit>> Publish<TMessage>(TMessage message, CancellationToken cancellationToken)
+        where TMessage : class, IMessage;
 }

@@ -69,14 +69,6 @@
           "System.ComponentModel.Annotations": "4.3.0"
         }
       },
-      "Confluent.Kafka": {
-        "type": "Transitive",
-        "resolved": "2.5.3",
-        "contentHash": "IdKQCWsRC+5ld9c7djAvKCFOn++qVW2BrcpxngwkM6ELeXIKjJ6wfa7R096XZFqqU3LIl7zGPypTKQliAZZArQ==",
-        "dependencies": {
-          "librdkafka.redist": "2.5.3"
-        }
-      },
       "Docker.DotNet": {
         "type": "Transitive",
         "resolved": "3.125.15",
@@ -1229,6 +1221,15 @@
           "Microsoft.EntityFrameworkCore.Relational": "[8.0.8, )",
           "Npgsql.EntityFrameworkCore.PostgreSQL": "[8.0.4, )",
           "Sample.Core": "[1.0.0, )"
+        }
+      },
+      "Confluent.Kafka": {
+        "type": "CentralTransitive",
+        "requested": "[2.5.3, )",
+        "resolved": "2.5.3",
+        "contentHash": "IdKQCWsRC+5ld9c7djAvKCFOn++qVW2BrcpxngwkM6ELeXIKjJ6wfa7R096XZFqqU3LIl7zGPypTKQliAZZArQ==",
+        "dependencies": {
+          "librdkafka.redist": "2.5.3"
         }
       },
       "EntityFrameworkCore.NamingConventions": {

@@ -4,14 +4,20 @@ using Confluent.Kafka;
 using Microsoft.Extensions.DependencyInjection;
 using Sample.Common.Messaging.Abstractions;
 using Sample.Common.Types;
+using Sample.Infrastructure.Messaging.Kafka.Serialization;
 
 namespace Sample.Infrastructure.Messaging.Kafka.Publisher;
 
-public sealed class KafkaMessagePublisher(IServiceProvider serviceProvider) : IMessagePublisher
+public sealed class KafkaMessagePublisher : IMessagePublisher
 {
-    private readonly IServiceProvider _serviceProvider = serviceProvider;
+    private readonly IServiceProvider _serviceProvider;
 
-    public async ValueTask<Result<Unit>> Publish<TMessage>(TMessage message, CancellationToken cancellationToken) where TMessage : IMessage
+    public KafkaMessagePublisher(IServiceProvider serviceProvider)
+    {
+        _serviceProvider = serviceProvider;
+    }
+
+    public async ValueTask<Result<Unit>> Publish<TMessage>(TMessage message, CancellationToken cancellationToken) where TMessage : class, IMessage
     {
         try
         {
@@ -25,6 +31,7 @@ public sealed class KafkaMessagePublisher(IServiceProvider serviceProvider) : IM
                 { "message_type", JsonSerializer.SerializeToUtf8Bytes(typeof(TMessage).FullName) },
                 { "message_id", JsonSerializer.SerializeToUtf8Bytes(message.MessageId) }
             };
+            var serializer = sp.ServiceProvider.GetRequiredService<IKafkaMessageSerializer<TMessage>>();
             var json = JsonSerializer.SerializeToUtf8Bytes(message, MessagesSerializationConfig.Default.Options);
         
             var key = config.KeySelector(message);

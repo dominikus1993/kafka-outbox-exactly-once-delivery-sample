@@ -1,5 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Confluent.Kafka" />
     <PackageReference Include="EntityFrameworkCore.NamingConventions" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
