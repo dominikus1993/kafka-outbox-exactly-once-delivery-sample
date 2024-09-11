@@ -1,16 +1,27 @@
 using Confluent.Kafka;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Sample.Common.Messaging.Abstractions;
+using Sample.Infrastructure.Messaging.Kafka.Configuration;
 
 namespace Sample.Infrastructure.Messaging.Kafka.Consumer;
 
-public sealed class KafkaEventConsumer<T> : BackgroundService where T: IMessage
+public sealed class KafkaEventConsumer<T> : BackgroundService where T: class, IMessage
 {
+    private string TypeConsumerName = typeof(T).Name;
     private readonly ConsumerConfig _consumerConfig;
-
-    public KafkaEventConsumer(ConsumerConfig consumerConfig)
+    private KafkaConsumerConfig<T> _kafkaConsumerConfig;
+    private IConsumer<Ignore, byte[]>? _consumer;
+    private KafkaMessageProcessor<T> _messageProcessor;
+    private ILogger<KafkaEventConsumer<T>> _logger;
+    private IHostApplicationLifetime _application;
+    public KafkaEventConsumer(ConsumerConfig consumerConfig, KafkaConsumerConfig<T> kafkaConsumerConfig, KafkaMessageProcessor<T> messageProcessor, ILogger<KafkaEventConsumer<T>> logger, IHostApplicationLifetime application)
     {
         _consumerConfig = consumerConfig;
+        _kafkaConsumerConfig = kafkaConsumerConfig;
+        _messageProcessor = messageProcessor;
+        _logger = logger;
+        _application = application;
     }
 
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
@@ -20,35 +31,64 @@ public sealed class KafkaEventConsumer<T> : BackgroundService where T: IMessage
     
     private async Task Consume(CancellationToken stoppingToken)
     {
-        var pConfig = new ProducerConfig
-        {
-            BootstrapServers = _consumerConfig.BootstrapServers,
-            ClientId = clientId + "_producer",
-            // The TransactionalId identifies this instance of the map words processor.
-            // If you start another instance with the same transactional id, the existing
-            // instance will be fenced.
-            TransactionalId = TransactionalIdPrefix_MapWords + "-" + clientId
-        };
+        var clientId = _kafkaConsumerConfig.ClientId;
+        _consumerConfig.ClientId = clientId + "_consumer";
+        _consumer = new ConsumerBuilder<Ignore, byte[]>(_consumerConfig).Build();
+        
+        
+        _consumer.Subscribe(_kafkaConsumerConfig.Topic);
 
-        var cConfig = new ConsumerConfig
+        while (!stoppingToken.IsCancellationRequested)
         {
-            BootstrapServers = brokerList,
-            ClientId = clientId + "_consumer",
-            GroupId = ConsumerGroup_MapWords,
-            // AutoOffsetReset specifies the action to take when there
-            // are no committed offsets for a partition, or an error
-            // occurs retrieving offsets. If there are committed offsets,
-            // it has no effect.
-            AutoOffsetReset = AutoOffsetReset.Earliest,
-            // Offsets are committed using the producer as part of the
-            // transaction - not the consumer. When using transactions,
-            // you must turn off auto commit on the consumer, which is
-            // enabled by default!
-            EnableAutoCommit = false,
-            // Enable incremental rebalancing by using the CooperativeSticky
-            // assignor (avoid stop-the-world rebalances).
-            PartitionAssignmentStrategy = PartitionAssignmentStrategy.CooperativeSticky
-        };
+            try
+            {
 
+                var cr = _consumer.Consume(stoppingToken);
+                var result = await _messageProcessor.Process(cr, stoppingToken);
+                if (result.IsSuccess)
+                {
+                    
+                }
+                _consumer.StoreOffset(cr);
+                
+                if (cr.IsPartitionEOF)
+                {
+                    // _logger.LogPartitionEOF(cr.Topic, cr.Partition.Value, cr.Offset.Value);
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                break;
+            }
+            catch (ConsumeException e) when (e.Error.IsFatal)
+            {
+                // _logger.LogFatalError(e, _topic.Name);
+                _application.StopApplication();
+                break;
+            }
+            catch (ConsumeException e)
+            {
+                    
+                if (e.Error.IsFatal)
+                {
+                    // _logger.LogFatalError(e, _topic.Name);
+                    _application.StopApplication();
+                    break;
+
+                }
+                // _logger.LogConsumeError(e, _topic.Name);
+            }
+            catch (Exception e)
+            {
+                // _logger.LogUnexpectedError(e, _topic.Name);
+            }
+        }
+
+    }
+
+    public override void Dispose()
+    {
+        _consumer?.Dispose();
+        base.Dispose();
     }
 }
